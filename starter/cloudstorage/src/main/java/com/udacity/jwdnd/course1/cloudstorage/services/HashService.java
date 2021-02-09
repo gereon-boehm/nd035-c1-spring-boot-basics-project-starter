@@ -12,7 +12,7 @@ import java.security.spec.KeySpec;
 import java.util.Base64;
 
 @Component
-public class HashService {
+    public class HashService {
     private Logger logger = LoggerFactory.getLogger(HashService.class);
 
     public String getHashedValue(String data, String salt) {
