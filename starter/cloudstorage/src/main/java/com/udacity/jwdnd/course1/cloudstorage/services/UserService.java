@@ -43,6 +43,4 @@ public class UserService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return getUser(username).getUserId();
     }
-
-    public List<User> getAllUsers() {return userMapper.getAllUsers();}
 }

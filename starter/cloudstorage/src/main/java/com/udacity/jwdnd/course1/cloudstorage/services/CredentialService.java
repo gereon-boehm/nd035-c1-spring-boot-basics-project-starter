@@ -2,9 +2,14 @@ package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.CredentialMapper;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.model.Note;
+import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
+@Service
 public class CredentialService {
     private final CredentialMapper credentialMapper;
     private final UserService userService;
@@ -24,6 +29,10 @@ public class CredentialService {
     }
 
     public List<Credential> getAllCredentials() {
-        return credentialMapper.getAllCredentials();
+        List<Credential> credentialList = credentialMapper.getAllCredentials(userService.getUserId());
+        if(credentialList != null)
+            return credentialList;
+        else
+            return new ArrayList<Credential>();
     }
 }

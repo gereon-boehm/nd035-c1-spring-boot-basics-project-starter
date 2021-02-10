@@ -14,12 +14,12 @@ public interface FileMapper {
     @Options(useGeneratedKeys = true, keyProperty = "noteId")
     int insert(File file);
 
-    @Delete("DELETE * FROM FILES WHERE fileId = #{fileId}")
+    @Delete("DELETE * FROM FILES WHERE fileid = #{fileId}")
     void delete(Integer fileId);
 
-    @Update("UPDATE NOTE SET (fileTitle, noteDescription) VALUES(#{noteTitle} #{noteDescription}) WHERE noteId = #{noteId}")
+    @Update("UPDATE NOTE SET (fileTitle, noteDescription) VALUES(#{noteTitle} #{noteDescription}) WHERE noteid = #{noteId}")
     void update(Integer fileId);
 
-    @Select("SELECT * FROM FILES")
-    List<File> getFiles();
+    @Select("SELECT * FROM FILES WHERE userid = #{userId}")
+    List<File> getFiles(Integer userId);
 }
