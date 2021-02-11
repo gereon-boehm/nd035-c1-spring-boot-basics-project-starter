@@ -1,6 +1,8 @@
 package com.udacity.jwdnd.course1.cloudstorage.controller;
 
+import com.udacity.jwdnd.course1.cloudstorage.dto.FileDTO;
 import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
+import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.AuthenticationService;
 import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
@@ -28,8 +30,21 @@ public class HomeController {
         this.credentialService = credentialService;
     }
 
+    @ModelAttribute("fileDTO")
+    public FileDTO getFileDTO(){
+        return new FileDTO();
+    }
+    @ModelAttribute
+    public Note getNote(){
+        return new Note();
+    }
+    @ModelAttribute
+    public Credential getCredential(){
+        return new Credential();
+    }
+
     @GetMapping
-    public String homeView(Authentication authentication, Model model) {
+    public String homeView(Model model) {
         model.addAttribute("fileList", fileService.getAllFiles());
         model.addAttribute("noteList", noteService.getAllNotes());
         model.addAttribute("credentialList", credentialService.getAllCredentials());
@@ -43,7 +58,7 @@ public class HomeController {
     }
 
     @PostMapping("/file-upload")
-    public String uploadFile(@ModelAttribute("file") MultipartFile file, Model model) throws IOException {
+    public String uploadFile(@ModelAttribute("fileDTO") MultipartFile file, Model model) throws IOException {
         int fileId = fileService.uploadFile(file);
         model.addAttribute("fileList", fileService.getAllFiles());
         return "home";
@@ -53,21 +68,25 @@ public class HomeController {
     public void viewFile() {
     }
 
-    @DeleteMapping("/delete-file/{id}")
-    public void deleteFile(@PathVariable("id") Integer id) {
+    @GetMapping("/delete-file/{id}")
+    public String deleteFile(@PathVariable("id") Integer id, Model model) {
         fileService.deleteById(id);
+        model.addAttribute("fileList", fileService.getAllFiles());
+        return "home";
     }
 
     @PostMapping("/add-note")
-    public String addCNote(@ModelAttribute("note") Note note, Model model) {
+    public String addNote(@ModelAttribute("note") Note note, Model model) {
         noteService.add(note);
         model.addAttribute("noteList", noteService.getAllNotes());
         return "home";
     }
 
-    @DeleteMapping("/delete-note/{id}")
-    public void deleteNote(@PathVariable("id") Integer id) {
+    @GetMapping("/delete-note/{id}")
+    public String deleteNote(@PathVariable Integer id, Model model) {
         noteService.deleteById(id);
+        model.addAttribute("noteList", noteService.getAllNotes());
+        return "home";
     }
 
     @PostMapping("/add-credential")
@@ -81,8 +100,10 @@ public class HomeController {
     public void editCredentials() {
     }
 
-    @DeleteMapping("/delete-credential/{id}")
-    public void deleteCredentials(@PathVariable("id") Integer id) {
+    @GetMapping("/delete-credential/{id}")
+    public String deleteCredentials(@PathVariable Integer id, Model model) {
         credentialService.deleteById(id);
+        model.addAttribute("credentialList", credentialService.getAllCredentials());
+        return "home";
     }
 }

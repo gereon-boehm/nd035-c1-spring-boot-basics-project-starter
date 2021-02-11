@@ -25,14 +25,14 @@
                 </nav>
                 <div class="tab-content" id="nav-tabContent">
                     <div class="tab-pane fade show active" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
-                        <form action="#" th:action="@{/home/file-upload}" th:object="${file}" enctype="multipart/form-data" method="POST">
+                        <form action="#" th:action="@{/home/file-upload}" th:object="${fileDTO}" enctype="multipart/form-data" method="POST">
                             <div class="container">
                                 <div class="row" style="margin: 1em;">
                                     <div class="col-sm-2">
                                         <label for="fileUpload">Upload a New File:</label>
                                     </div>
                                     <div class="col-sm-6">
-                                        <input type="file" class="form-control-file" id="fileUpload" name="fileUpload">
+                                        <input th:field="*{file}" type="file" class="form-control-file" id="fileUpload" name="fileUpload">
                                     </div>
                                     <div class="col-sm-4">
                                         <button type="submit" class="btn btn-dark">Upload</button>
@@ -56,9 +56,9 @@
                                     <td>
                                         <a th:href="@{/home/download-file/{id}(id = ${file.fileId})}" class="btn btn-success">Download</a>
                                     <td>
-                                        <a th:href="@{/home/delete-file/{id}(id = ${file.fileId})}" class="btn btn-danger">Delete</a>
+                                        <a th:href="@{/home/delete-file/{id}(id = ${file.fileId})}" class="btn btn-danger" id="deleteFile">Delete</a>
                                     </td>
-                                    <th scope="row" th:text="${file.filename}">ExampleFile.txt</th>
+                                    <th scope="row" th:text="${file.fileName}">ExampleFile.txt</th>
                                 </tr>
                                 </tbody>
                             </table>
@@ -104,7 +104,7 @@
                                         <form action="#" th:action="@{/home/note-submit}" th:object="${note}" method="POST">
                                             <div class="form-group">
                                                 <label for="noteTitle" class="col-form-label">Title</label>
-                                                <input type="text" name="noteTitle" id="noteTitle" th:value="*{noteTitle}" class="form-control" maxlength="20" required>
+                                                <input type="text" id="noteTitle" th:field="*{noteTitle}" class="form-control" maxlength="20" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="noteDescription" class="col-form-label">Description</label>

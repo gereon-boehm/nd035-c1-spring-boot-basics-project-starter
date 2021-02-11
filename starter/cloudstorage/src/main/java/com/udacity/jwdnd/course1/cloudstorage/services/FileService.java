@@ -25,8 +25,7 @@ public class FileService {
     }
 
     public int uploadFile(MultipartFile file) throws IOException {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-        return fileMapper.insert(new File(null, fileName, file.getContentType(), file.getSize(), userService.getUserId(), file.getBytes()));
+        return fileMapper.insert(new File(null, file.getOriginalFilename(), file.getContentType(), file.getSize(), userService.getUserId(), file.getBytes()));
     }
 
     public List<File> getAllFiles() {
@@ -38,6 +37,6 @@ public class FileService {
     }
 
     public void deleteById(Integer id) {
-        fileMapper.delete(id);
+        fileMapper.deleteById(id);
     }
 }
