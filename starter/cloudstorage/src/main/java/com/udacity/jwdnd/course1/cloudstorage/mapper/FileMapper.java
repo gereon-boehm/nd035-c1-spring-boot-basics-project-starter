@@ -2,6 +2,7 @@ package com.udacity.jwdnd.course1.cloudstorage.mapper;
 
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import org.apache.ibatis.annotations.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -16,6 +17,9 @@ public interface FileMapper {
 
     @Delete("DELETE FROM FILES WHERE fileid = #{fileId}")
     void deleteById(Integer fileId);
+
+    @Select("SELECT * FROM FILES WHERE fileid = #{fileId}")
+    File getFile(Integer fileId);
 
     @Select("SELECT * FROM FILES WHERE userid = #{userId}")
     List<File> getFiles(Integer userId);

@@ -1,5 +1,6 @@
-package com.udacity.jwdnd.course1.cloudstorage;
+package com.udacity.jwdnd.course1.cloudstorage.pages;
 
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,8 +29,7 @@ public class LoginPage {
     }
 
     private void waitForElementClick(WebElement element){
-        waitForElement(element);
-        element.click();
+        ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
     public LoginPage(WebDriver driver){

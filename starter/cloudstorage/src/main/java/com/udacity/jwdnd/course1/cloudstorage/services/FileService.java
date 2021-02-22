@@ -1,18 +1,13 @@
 package com.udacity.jwdnd.course1.cloudstorage.services;
 
 import com.udacity.jwdnd.course1.cloudstorage.mapper.FileMapper;
-import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
-import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class FileService {
@@ -36,7 +31,39 @@ public class FileService {
             return new ArrayList<File>();
     }
 
+    public File getFile(Integer fileId){
+        return fileMapper.getFile(fileId);
+    }
+
     public void deleteById(Integer id) {
         fileMapper.deleteById(id);
+    }
+
+    public boolean isFileNameAvailable(MultipartFile multipartFile)
+    {
+        boolean fileNameIsAvailable = true;
+        List<File> fileList = fileMapper.getFiles(userService.getUserId());
+        String fileName = multipartFile.getOriginalFilename();
+        if(fileList != null){
+            for(File file : fileList)
+            {
+                System.out.println(file.getFileName());
+                if(fileName.equals(file.getFileName()))
+                {
+                    fileNameIsAvailable = false;
+                    break;
+                }
+            }
+        }
+        return fileNameIsAvailable;
+    }
+
+    public boolean hasAllowedFileSize(MultipartFile file){
+        if(file.getSize() < 1048576){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }

@@ -24,6 +24,10 @@ public class NoteService {
         return noteMapper.insert(new Note(null, note.getNoteTitle(), note.getNoteDescription(), userService.getUserId()));
     }
 
+    public void edit(Note note) {
+        noteMapper.update(note);
+    }
+
     public List<Note> getAllNotes() {
         List<Note> noteList = noteMapper.getAllNotes(userService.getUserId());
         if (noteList != null)

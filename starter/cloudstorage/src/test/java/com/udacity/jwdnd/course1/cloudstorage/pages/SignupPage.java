@@ -1,9 +1,6 @@
-package com.udacity.jwdnd.course1.cloudstorage;
+package com.udacity.jwdnd.course1.cloudstorage.pages;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -46,21 +43,6 @@ public class SignupPage {
         element.click();
     }
 
-    public void isDisplayed(WebElement element) {
-        try {
-            WebDriverWait wait = new WebDriverWait(driver, 90);
-            List<WebElement> cccc = driver.findElements(By.xpath("//div[contains(@id,'loadmask')]"));
-            boolean pageload = wait.until(ExpectedConditions.invisibilityOfAllElements(cccc));
-            // boolean pageload=
-            // wait.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//div[contains(@id,'loadmask-')]")));
-            if (pageload) {
-                wait.until(ExpectedConditions.elementToBeClickable(element));
-            }
-        }
-        catch (org.openqa.selenium.NoSuchElementException exception) { }
-    }
-
-
     private void waitForElementSendKeys(WebElement element, String key){
         waitForElement(element);
         element.sendKeys(key);
@@ -77,14 +59,8 @@ public class SignupPage {
         waitForElementSendKeys(username,  inputUsername);
         waitForElementSendKeys(password, inputPassword);
         waitForButtonClick(signupButton);
-
-        try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         //waitForButtonClick(loginLink);
-        loginLink.click();
+        ((JavascriptExecutor) this.driver).executeScript("arguments[0].click();", loginLink);
         waitForTitle("Login");
     }
 }
