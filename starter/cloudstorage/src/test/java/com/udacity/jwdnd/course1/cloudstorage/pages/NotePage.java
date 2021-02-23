@@ -21,26 +21,14 @@ public class NotePage {
     @FindBy(id="add-note-button")
     private WebElement addNoteButton;
 
-    @FindBy(id="edit-note-link")
-    private WebElement editNoteLink;
-
     @FindBy(id="save-changes-note-button")
     private WebElement saveChangesNoteButton;
-
-    @FindBy(id = "delete-note-link")
-    private WebElement deleteNoteLink;
 
     @FindBy(id="note-title")
     private WebElement noteTitle;
 
     @FindBy(id="note-description")
     private WebElement noteDescription;
-
-    @FindBy(id="note-title-display")
-    private WebElement noteTitleDisplay;
-
-    @FindBy(id="note-description-display")
-    private WebElement noteDescriptionDisplay;
 
     private final WebDriver driver;
 
@@ -77,18 +65,20 @@ public class NotePage {
         waitForElementClick(saveChangesNoteButton);
     }
 
-    public List<String> getNoteDetails(){
-        return Arrays.asList(getWebElement(noteTitleDisplay).getText(), getWebElement(noteDescriptionDisplay).getText());
+    public List<String> getNoteDetails(int id){
+        WebElement title = getWebElement(driver.findElement(By.id("note-title-display-" + id)));
+        WebElement description = getWebElement(driver.findElement(By.id("note-description-display-" + id)));
+        return Arrays.asList(title.getText(), description.getText());
     }
 
-    public void editNote(String title, String description){
-        waitForElementClick(editNoteLink);
+    public void editNote(int id, String title, String description){
+        waitForElementClick(driver.findElement(By.id("note-edit-link-" + id)));
         waitForElementSendKeys(this.noteTitle, title);
         waitForElementSendKeys(this.noteDescription, description);
         waitForElementClick(saveChangesNoteButton);
     }
 
-    public void deleteNote(String title, String description){
-        waitForElementClick(deleteNoteLink);
+    public void deleteNote(int id){
+        waitForElementClick(driver.findElement(By.id("note-delete-link-" + id)));
     }
 }

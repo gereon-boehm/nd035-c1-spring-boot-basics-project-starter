@@ -1,25 +1,18 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.pages.*;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@Transactional
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
@@ -69,13 +62,6 @@ class CloudStorageApplicationTests {
 		loginPage.login(username, password);
 	}
 
-	private void createNote(String title, String description){
-		driver.get(baseURL + "/home");
-		notePage = new NotePage(driver);
-		notePage.clickOnNavNotesTab();
-		notePage.addNewNote(title, description);
-	}
-
 	@Test
 	@Order(1)
 	public void testGetSignupPage() {
@@ -119,7 +105,6 @@ class CloudStorageApplicationTests {
 	@Test
 	@Order(5)
 	void testAddNewNote(){
-		signup();
 		login();
 		String title = "Note Title";
 		String description = "Note Description";
@@ -128,7 +113,7 @@ class CloudStorageApplicationTests {
 		notePage.clickOnNavNotesTab();
 		notePage.addNewNote(title, description);
 		notePage.clickOnNavNotesTab();
-		List<String> details = notePage.getNoteDetails();
+		List<String> details = notePage.getNoteDetails(1);
 		Assertions.assertEquals(title, details.get(0));
 		Assertions.assertEquals(description, details.get(1));
 	}
@@ -136,162 +121,105 @@ class CloudStorageApplicationTests {
 	@Test
 	@Order(6)
 	void testEditExistingNote(){
-		signup();
 		login();
-		String title = "Note Title";
-		String description = "Note Description";
 		driver.get(baseURL + "/home");
 		notePage = new NotePage(driver);
 		notePage.clickOnNavNotesTab();
-		notePage.addNewNote(title, description);
+		notePage.editNote(1, "New Title", "New Description");
 		notePage.clickOnNavNotesTab();
-		List<String> details = notePage.getNoteDetails();
-		Assertions.assertEquals(title, details.get(0));
-		Assertions.assertEquals(description, details.get(1));
-
-		title="new title";
-		description="new description";
-		notePage.editNote(title, description);
-		notePage.clickOnNavNotesTab();
-		details = notePage.getNoteDetails();
-		Assertions.assertEquals(title, details.get(0));
-		Assertions.assertEquals(description, details.get(1));
+		List<String> details = notePage.getNoteDetails(1);
+		Assertions.assertEquals("New Title", details.get(0));
+		Assertions.assertEquals("New Description", details.get(1));
 	}
 
 	@Test
 	@Order(7)
 	void testDeleteExistingNote(){
-		signup();
 		login();
-		String title = "Note Title";
-		String description = "Note Description";
 		driver.get(baseURL + "/home");
 		notePage = new NotePage(driver);
 		notePage.clickOnNavNotesTab();
-		notePage.addNewNote(title, description);
+		notePage.deleteNote(1);
 		notePage.clickOnNavNotesTab();
-
-		List<String> details = notePage.getNoteDetails();
-		Assertions.assertEquals(title, details.get(0));
-		Assertions.assertEquals(description, details.get(1));
-
-		notePage.deleteNote(title, description);
-		notePage.clickOnNavNotesTab();
-		Assertions.assertEquals(0, driver.findElements(By.id("note-title-display")).size());
-		Assertions.assertEquals(0, driver.findElements(By.id("note-description-display")).size());
+		Assertions.assertEquals(0, driver.findElements(By.id("note-list")).size());
 	}
 
 	@Test
 	@Order(8)
 	void testCreateCredentials(){
-		String url = "www.superduperdrive.com";
-		String secondUrl = "www.second-credential.com";
-		String secondUsername = "second user";
-		String secondPassword = "second password";
-
-		signup();
 		login();
 
 		driver.get(baseURL + "/home");
 		credentialPage = new CredentialPage(driver);
 
 		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential(url, username, password);
+		credentialPage.addNewCredential("www.first-url.com", "firstUser", "first-password");
 
 		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential(secondUrl, secondUsername, secondPassword);
+		credentialPage.addNewCredential("www.second-url.com", "secondUser", "second-password");
 
 		credentialPage.clickOnCredentialTab();
 
 		// First credential
 		List<String> details = credentialPage.getCredentialDetails(1);
-		Assertions.assertEquals(url, details.get(0));
-		Assertions.assertEquals(username, details.get(1));
+		Assertions.assertEquals("www.first-url.com", details.get(0));
+		Assertions.assertEquals("firstUser", details.get(1));
 		// Password must be encrypted
-		Assertions.assertNotEquals(password, details.get(2));
+		Assertions.assertNotEquals("first-password", details.get(2));
 
 		// Second credential
 		details = credentialPage.getCredentialDetails(2);
-		Assertions.assertEquals(secondUrl, details.get(0));
-		Assertions.assertEquals(secondUsername, details.get(1));
+		Assertions.assertEquals("www.second-url.com", details.get(0));
+		Assertions.assertEquals("secondUser", details.get(1));
 		// Password must be encrypted
-		Assertions.assertNotEquals(secondPassword, details.get(2));
+		Assertions.assertNotEquals("second-password", details.get(2));
 	}
 
 	@Test
 	@Order(9)
 	public void testEditCredentials(){
-		String firstUrl = "www.superduperdrive.com";
-		String firstUsername = this.username;
-		String firstPassword = this.password;
-		String secondUrl = "www.second-credential.com";
-		String secondUsername = "second user";
-		String secondPassword = "second password";
-		String suffix = "modified";
-
-		signup();
 		login();
 
 		driver.get(baseURL + "/home");
 		credentialPage = new CredentialPage(driver);
-
-		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential(firstUrl, firstUsername, firstPassword);
-
-		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential(secondUrl, secondUsername, secondPassword);
 
 		credentialPage.clickOnCredentialTab();
 		// View first credential
 		credentialPage.viewCredential(1);
 		// Password must be decrypted when viewed
-		Assertions.assertEquals(firstPassword, credentialPage.getUncryptedPassword());
+		Assertions.assertEquals("first-password", credentialPage.getUncryptedPassword());
 
 		// Edit first credential
-		firstUrl += "/" + suffix;
-		firstUsername += "-" + suffix;
-		firstPassword += "-" + suffix;
-		credentialPage.setCredential(firstUrl, firstUsername, firstPassword);
-
+		credentialPage.setCredential("www.first-url-edited.com", "firstUsernameEdited", "first-password-edited");
 		credentialPage.clickOnCredentialTab();
 		List<String> details = credentialPage.getCredentialDetails(1);
-		Assertions.assertEquals(firstUrl, details.get(0));
-		Assertions.assertEquals(firstUsername, details.get(1));
+		Assertions.assertEquals("www.first-url-edited.com", details.get(0));
+		Assertions.assertEquals("firstUsernameEdited", details.get(1));
 		// Password must be encrypted
-		Assertions.assertNotEquals(firstPassword, details.get(2));
+		Assertions.assertNotEquals("first-password-edited", details.get(2));
 
 		// View second credential
 		credentialPage.viewCredential(2);
 		// Password must be decrypted when viewed
-		Assertions.assertEquals(secondPassword, credentialPage.getUncryptedPassword());
+		Assertions.assertEquals("second-password", credentialPage.getUncryptedPassword());
 		// Edit second credential
-		secondUrl += "/" + suffix;
-		secondUsername += "-" + suffix;
-		secondPassword += "-" + suffix;
-		credentialPage.setCredential(secondUrl, secondUsername, secondPassword);
+		credentialPage.setCredential("www.second-url-edited.com", "secondUsernameEdited", "second-password-edited");
 
 		credentialPage.clickOnCredentialTab();
 		details = credentialPage.getCredentialDetails(2);
-		Assertions.assertEquals(secondUrl, details.get(0));
-		Assertions.assertEquals(secondUsername, details.get(1));
+		Assertions.assertEquals("www.second-url-edited.com", details.get(0));
+		Assertions.assertEquals("secondUsernameEdited", details.get(1));
 		// Password must be encrypted
-		Assertions.assertNotEquals(secondPassword, details.get(2));
+		Assertions.assertNotEquals("second-password-edited", details.get(2));
 	}
 
 	@Test
 	@Order(10)
 	public void testDeleteCredentials() {
-		signup();
 		login();
 
 		driver.get(baseURL + "/home");
 		credentialPage = new CredentialPage(driver);
-
-		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential("www.superduperdrive.com", this.username, this.password);
-
-		credentialPage.clickOnCredentialTab();
-		credentialPage.addNewCredential("www.second-credential.com", "second user", "second password");
 
 		credentialPage.clickOnCredentialTab();
 		credentialPage.deleteCredential(1);

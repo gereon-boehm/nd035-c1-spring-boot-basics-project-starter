@@ -74,22 +74,21 @@
                                         <th style="width: 60%" scope="col">Description</th>
                                     </tr>
                                 </thead>
-                                <tbody th:each="note: ${noteList}">
+                                <tbody id="note-list" th:each="note: ${noteList}">
                                     <tr>
                                         <td>
-                                            <a
+                                            <a th:id = "'note-edit-link-' + ${note.noteId}"
                                                th:noteId="${note.noteId}"
                                                th:noteTitle="${note.noteTitle}"
                                                th:noteDescription="${note.noteDescription}"
                                                onclick="showNoteModal(this.getAttribute('noteId'), this.getAttribute('noteTitle'), this.getAttribute('noteDescription'))"
                                                class="btn btn-success"
-                                               id = "edit-note-link"
                                                name="edit-note">Edit
                                             </a>
-                                            <a id="delete-note-link" th:href="@{/home/delete-note/{id}(id = ${note.noteId})}" class="btn btn-danger">Delete</a>
+                                            <a th:id="'note-delete-link-' + ${note.noteId}" th:href="@{/home/delete-note/{id}(id = ${note.noteId})}" class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row" id="note-title-display" th:text="${note.noteTitle}">Example Note Title</th>
-                                        <td id="note-description-display" th:text="${note.noteDescription}">Example Note Description </td>
+                                        <th th:id="'note-title-display-' + ${note.noteId}" scope="row" th:text="${note.noteTitle}">Example Note Title</th>
+                                        <td th:id="'note-description-display-' + ${note.noteId}" th:text="${note.noteDescription}">Example Note Description </td>
                                     </tr>
                                 </tbody>
                             </table>
