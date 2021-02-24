@@ -58,8 +58,9 @@ public class FileService {
         return fileNameIsAvailable;
     }
 
-    public boolean hasAllowedFileSize(MultipartFile file){
-        if(file.getSize() < 1048576){
+    public boolean hasAllowedFileSize(MultipartFile file, int maxFileSize){
+        System.out.println("file.getSize(): " + file.getSize());
+        if(file.getSize() < maxFileSize){
             return true;
         }
         else{

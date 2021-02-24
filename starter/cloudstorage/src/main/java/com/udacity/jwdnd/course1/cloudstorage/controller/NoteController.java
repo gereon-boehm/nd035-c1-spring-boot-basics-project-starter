@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class NoteController {
     private final NoteService noteService;
+    private int maxTitleLength = 20;
+    private int maxDescriptionLength = 1000;
 
     @ModelAttribute
     public FileDTO getFileDTO(){
@@ -31,18 +33,43 @@ public class NoteController {
 
     @PostMapping("home/submit-note")
     public String addNote(@ModelAttribute("note") Note note, Model model) {
-        if(note.getNoteId() > 0){
-            noteService.edit(note);
+        if(note.getNoteTitle().length() > maxTitleLength){
+            model.addAttribute("error", "Note can't be saved as the title exceeds "+ maxTitleLength + " characters.");
+        }
+        else if(note.getNoteDescription().length() > maxDescriptionLength){
+            model.addAttribute("error", "Note can't be saved as the description exceeds "+ maxDescriptionLength + " characters.");
+        }
+        else if(note.getNoteId() > 0){
+            try {
+                noteService.edit(note);
+                model.addAttribute("success", "Note was successfully edited.");
+            }
+            catch (Exception e){
+                model.addAttribute("error", "Failed to edit note. " + e.getMessage());
+            }
         }
         else{
-            int noteId = noteService.add(note);
+            try {
+                noteService.add(note);
+                model.addAttribute("success", "Note was successfully added.");
+            }
+            catch (Exception e){
+                model.addAttribute("error", "Failed to add note. " + e.getMessage());
+            }
         }
-        return "redirect:/home";
+        return "result";
     }
 
     @GetMapping("home/delete-note/{id}")
     public String deleteNote(@PathVariable("id") Integer id, Model model) {
-        noteService.deleteById(id);
-        return "redirect:/home";
+        try {
+            noteService.deleteById(id);
+            model.addAttribute("success", "Note was successfully deleted.");
+        }
+        catch (Exception e){
+            model.addAttribute("error", "Failed to delete note. " + e.getMessage());
+        }
+
+        return "result";
     }
 }

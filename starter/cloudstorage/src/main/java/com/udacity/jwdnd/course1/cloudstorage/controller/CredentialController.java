@@ -32,17 +32,35 @@ public class CredentialController {
     @PostMapping("home/submit-credential")
     public String addCredential(@ModelAttribute("credential") Credential credential, Model model) {
         if(credential.getCredentialId() > 0){
-            credentialService.edit(credential);
+            try {
+                credentialService.edit(credential);
+                model.addAttribute("success", "Credential was successfully edited.");
+            }
+            catch (Exception e){
+                model.addAttribute("error", "Failed to edit credential. " + e.getMessage());
+            }
         }
         else{
-            credentialService.add(credential);
+            try {
+                credentialService.add(credential);
+                model.addAttribute("success", "Credential was successfully added.");
+            }
+            catch (Exception e){
+                model.addAttribute("error", "Failed to add credential. " + e.getMessage());
+            }
         }
-        return "redirect:/home";
+        return "result";
     }
 
     @GetMapping("home/delete-credential/{id}")
     public String deleteCredentials(@PathVariable("id") Integer id, Model model) {
-        credentialService.deleteById(id);
-        return "redirect:/home";
+        try {
+            credentialService.deleteById(id);
+            model.addAttribute("success", "Credential was successfully deleted.");
+        }
+        catch (Exception e){
+            model.addAttribute("error", "Failed to delete credential. " + e.getMessage());
+        }
+        return "result";
     }
 }

@@ -5,6 +5,7 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Note;
 import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +21,7 @@ import java.io.IOException;
 @Controller
 public class FileController {
     private final FileService fileService;
+    private int maxFileSize = 10000000;
 
     @ModelAttribute
     public FileDTO getFileDTO(){
@@ -40,20 +42,27 @@ public class FileController {
 
     @PostMapping("home/file-upload")
     public String uploadFile(@ModelAttribute("fileDTO") MultipartFile file, Model model) throws IOException {
-        if(!fileService.isFileNameAvailable(file))
-        {
-            model.addAttribute("error", "Another uploaded file already contains this name - Choose another file name.");
+        if (file.getOriginalFilename().isEmpty()){
+            model.addAttribute("error", "No file is selected");
         }
-        else if(!fileService.hasAllowedFileSize(file)){
-            model.addAttribute("error", "File is to big. Please only upload files with a maximum of 1MB.");
+        else if(!fileService.isFileNameAvailable(file))
+        {
+            model.addAttribute("error", "File name already exists - Choose another file name.");
+        }
+        else if(!fileService.hasAllowedFileSize(file, maxFileSize)){
+            model.addAttribute("error", "File is to big. Please only upload files with a maximum of "+ (int)(maxFileSize / 1000000.0) + "MB.");
         }
         else{
-            int fileId = fileService.uploadFile(file);
-            if(fileId > 0){
-                model.addAttribute("success", "File upload was successful.");
-            }
-            else{
-                model.addAttribute("error", "Upload failed. Please try again.");
+            try {
+                int fileId = fileService.uploadFile(file);
+                if(fileId > 0){
+                    model.addAttribute("success", "File upload was successful.");
+                }
+                else{
+                    model.addAttribute("error", "Upload failed. Please try again.");
+                }
+            } catch (Exception e) {
+                model.addAttribute("error", "Upload failed. System error!" + e.getMessage());
             }
         }
         return "result";
@@ -69,7 +78,12 @@ public class FileController {
 
     @GetMapping("home/delete-file/{id}")
     public String deleteFile(@PathVariable("id") Integer id, Model model) {
-        fileService.deleteById(id);
-        return "home";
+        try {
+            fileService.deleteById(id);
+            model.addAttribute("success", "File was successfully deleted.");
+        } catch (Exception e) {
+            model.addAttribute("error", "File could not be deleted. Please try again.");
+        }
+        return "result";
     }
 }
