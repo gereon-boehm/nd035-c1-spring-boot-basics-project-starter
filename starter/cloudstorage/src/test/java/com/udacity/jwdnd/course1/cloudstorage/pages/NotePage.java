@@ -1,6 +1,5 @@
 package com.udacity.jwdnd.course1.cloudstorage.pages;
 
-import com.udacity.jwdnd.course1.cloudstorage.TestHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -10,11 +9,13 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class NotePage {
+    @FindBy(id="link-to-home")
+    WebElement linkToHome;
+
     @FindBy(id="nav-notes-tab")
     private WebElement navNotesTab;
 
@@ -36,7 +37,7 @@ public class NotePage {
         new WebDriverWait(driver, 60).until(ExpectedConditions.visibilityOf(element));
     }
 
-    private void waitForElementClick(WebElement element){
+    private void clickElement(WebElement element){
         ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
     }
 
@@ -55,14 +56,14 @@ public class NotePage {
     }
 
     public void clickOnNavNotesTab(){
-        waitForElementClick(navNotesTab);
+        clickElement(navNotesTab);
     }
 
     public void addNewNote(String noteTitle, String noteDescription){
-        waitForElementClick(addNoteButton);
+        clickElement(addNoteButton);
         waitForElementSendKeys(this.noteTitle, noteTitle);
         waitForElementSendKeys(this.noteDescription, noteDescription);
-        waitForElementClick(saveChangesNoteButton);
+        clickElement(saveChangesNoteButton);
     }
 
     public List<String> getNoteDetails(int id){
@@ -72,13 +73,17 @@ public class NotePage {
     }
 
     public void editNote(int id, String title, String description){
-        waitForElementClick(driver.findElement(By.id("note-edit-link-" + id)));
+        clickElement(driver.findElement(By.id("note-edit-link-" + id)));
         waitForElementSendKeys(this.noteTitle, title);
         waitForElementSendKeys(this.noteDescription, description);
-        waitForElementClick(saveChangesNoteButton);
+        clickElement(saveChangesNoteButton);
     }
 
     public void deleteNote(int id){
-        waitForElementClick(driver.findElement(By.id("note-delete-link-" + id)));
+        clickElement(driver.findElement(By.id("note-delete-link-" + id)));
+    }
+
+    public void goToHome(){
+        clickElement(linkToHome);
     }
 }

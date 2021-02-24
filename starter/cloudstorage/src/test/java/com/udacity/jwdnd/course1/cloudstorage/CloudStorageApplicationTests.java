@@ -26,6 +26,7 @@ class CloudStorageApplicationTests {
 	private HomePage homePage;
 	private NotePage notePage;
 	private CredentialPage credentialPage;
+	private ResultPage resultPage;
 
 	String firstName = "Hello";
 	String lastName = "World";
@@ -112,6 +113,7 @@ class CloudStorageApplicationTests {
 		notePage = new NotePage(driver);
 		notePage.clickOnNavNotesTab();
 		notePage.addNewNote(title, description);
+		notePage.goToHome();
 		notePage.clickOnNavNotesTab();
 		List<String> details = notePage.getNoteDetails(1);
 		Assertions.assertEquals(title, details.get(0));
@@ -126,6 +128,7 @@ class CloudStorageApplicationTests {
 		notePage = new NotePage(driver);
 		notePage.clickOnNavNotesTab();
 		notePage.editNote(1, "New Title", "New Description");
+		notePage.goToHome();
 		notePage.clickOnNavNotesTab();
 		List<String> details = notePage.getNoteDetails(1);
 		Assertions.assertEquals("New Title", details.get(0));
@@ -140,6 +143,7 @@ class CloudStorageApplicationTests {
 		notePage = new NotePage(driver);
 		notePage.clickOnNavNotesTab();
 		notePage.deleteNote(1);
+		notePage.goToHome();
 		notePage.clickOnNavNotesTab();
 		Assertions.assertEquals(0, driver.findElements(By.id("note-list")).size());
 	}
@@ -154,10 +158,10 @@ class CloudStorageApplicationTests {
 
 		credentialPage.clickOnCredentialTab();
 		credentialPage.addNewCredential("www.first-url.com", "firstUser", "first-password");
-
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 		credentialPage.addNewCredential("www.second-url.com", "secondUser", "second-password");
-
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 
 		// First credential
@@ -191,6 +195,7 @@ class CloudStorageApplicationTests {
 
 		// Edit first credential
 		credentialPage.setCredential("www.first-url-edited.com", "firstUsernameEdited", "first-password-edited");
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 		List<String> details = credentialPage.getCredentialDetails(1);
 		Assertions.assertEquals("www.first-url-edited.com", details.get(0));
@@ -204,7 +209,7 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("second-password", credentialPage.getUncryptedPassword());
 		// Edit second credential
 		credentialPage.setCredential("www.second-url-edited.com", "secondUsernameEdited", "second-password-edited");
-
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 		details = credentialPage.getCredentialDetails(2);
 		Assertions.assertEquals("www.second-url-edited.com", details.get(0));
@@ -223,9 +228,10 @@ class CloudStorageApplicationTests {
 
 		credentialPage.clickOnCredentialTab();
 		credentialPage.deleteCredential(1);
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 		credentialPage.deleteCredential(2);
-
+		credentialPage.goToHome();
 		credentialPage.clickOnCredentialTab();
 		Assertions.assertEquals(0, driver.findElements(By.id("credential-list")).size());
 	}

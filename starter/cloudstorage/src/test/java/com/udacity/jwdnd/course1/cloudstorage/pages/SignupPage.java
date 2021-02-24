@@ -59,8 +59,6 @@ public class SignupPage {
         waitForElementSendKeys(username,  inputUsername);
         waitForElementSendKeys(password, inputPassword);
         waitForButtonClick(signupButton);
-        //waitForButtonClick(loginLink);
-        ((JavascriptExecutor) this.driver).executeScript("arguments[0].click();", loginLink);
         waitForTitle("Login");
     }
 }

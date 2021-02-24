@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CredentialPage {
+    @FindBy(id="link-to-home")
+    WebElement linkToHome;
 
     @FindBy(id="nav-credential-tab")
     private WebElement navCredentialTab;
@@ -111,5 +113,9 @@ public class CredentialPage {
 
     public void deleteCredential(int row){
         waitForElementClick(driver.findElement(By.id("credential-delete-link-" + row)));
+    }
+
+    public void goToHome(){
+        clickElement(linkToHome);
     }
 }
